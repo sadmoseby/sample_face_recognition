@@ -1,0 +1,9 @@
+{
+    "logging_level": "debug",
+    "mode": "serve",
+    "server_mode": "local_server",
+    "serve_details": {
+      "port": 48041,
+      "experiment": "experiment_2"
+    }
+}

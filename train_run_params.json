@@ -1,0 +1,19 @@
+{
+    "logging_level": "DEBUG",
+    "mode": "train",
+    "train_details": [
+        {
+            "experiment": "experiment_2",
+            "datasets": [{"name": "personal", "type": "SPECIAL_ANNOTATED"}],
+            "face_detect": {
+                "params" : {},
+                "overlap_threshold": 0.5
+            },
+            "face_classify": {
+                "train_test_split": 0.5,
+                "random_state": 53,
+                "params" : {}
+            }
+        }
+    ]
+}
