@@ -4,10 +4,11 @@ import json
 import time
 import os
 
-def execute_shell_command(cmd=None, max_time=None):
+def execute_shell_command(cmd=None, max_time=None, debug_=False):
     retcode = 0
     sleep_interval = 60
-    print("Executing shell command:- {}".format(str(cmd)))
+    if debug_:
+        print("Executing shell command:- {}".format(str(cmd)))
     if not cmd:
         return retcode
     try:
@@ -45,6 +46,7 @@ def create_parser():
     parser.add_argument('--run_data', help="name of the directory where runtime data created by the container is stored")
     parser.add_argument("--run_params_path", help="Full path location of the run_params_file")
     parser.add_argument("--gpu", type=bool, default=False, help="use Gpu for processing")
+    parser.add_argument("--debug", type=bool, default=False, help="print debugs") 
     return parser
 
 
@@ -53,7 +55,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     shell_cmd = ""
     if args.mode == "train":
-        container_name = args.source_docker_image + "_" + str(int(time.time()))
+        container_name = "face_train_" + str(int(time.time()))
         shell_cmd = "docker run " 
         if not args.dest_docker_image:
             shell_cmd += " --rm "
@@ -77,18 +79,18 @@ if __name__ == "__main__":
             shell_cmd += " --mount type=bind,source={},destination=/app/run_params.json ".format(str(args.run_params_path))
         shell_cmd += " --name " + container_name + " " + args.source_docker_image
 
-        retcode = execute_shell_command(shell_cmd, max_time=3600)
+        retcode = execute_shell_command(shell_cmd, max_time=3600, debug_=args.debug)
         if retcode != 0:
             print("Shell command execution failed! Terminating prematurely !!")
             exit(1)
 
         if args.dest_docker_image:
             shell_cmd = "docker commit " + container_name + " " + args.dest_docker_image
-            execute_shell_command(shell_cmd, max_time=60)
+            execute_shell_command(shell_cmd, max_time=60, debug_=args.debug)
 
     elif args.mode == "serve":
-        container_name = args.source_docker_image + "_" + str(int(time.time()))
-        shell_cmd = "docker run -d --rm --gpus all " 
+        container_name = "face_test_" + str(int(time.time()))
+        shell_cmd = "docker run -d --rm " 
         shell_cmd += " -e mode='serve'"
         if args.gpu:
             shell_cmd += " --gpus all " 
@@ -110,7 +112,7 @@ if __name__ == "__main__":
                 shell_cmd += " -p {}:{}".format(str(port), str(port))
 
         shell_cmd += " --name " + container_name + " " + args.source_docker_image
-        retcode = execute_shell_command(shell_cmd)
+        retcode = execute_shell_command(shell_cmd, debug_=args.debug)
         if retcode != 0:
             print("Shell command execution failed! Terminating prematurely !!")
             exit(1)

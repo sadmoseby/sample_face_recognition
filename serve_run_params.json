@@ -1,5 +1,5 @@
 {
-    "logging_level": "debug",
+    "logging_level": "DEBUG",
     "mode": "serve",
     "server_mode": "local_server",
     "serve_details": {

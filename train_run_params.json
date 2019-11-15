@@ -10,7 +10,7 @@
                 "overlap_threshold": 0.5
             },
             "face_classify": {
-                "train_test_split": 0.5,
+                "train_test_split": 0.1,
                 "random_state": 53,
                 "params" : {}
             }
